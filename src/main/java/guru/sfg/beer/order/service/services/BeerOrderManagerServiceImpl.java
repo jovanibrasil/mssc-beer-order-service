@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BeerOrderManagerServiceImpl implements BeerOrderManager {
 
+    public static final String ORDER_ID_HEADER = "ORDER_ID_HEADER";
     private final StateMachineFactory<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachineFactory;
     private final BeerOrderRepository beerOrderRepository;
 
@@ -34,6 +35,7 @@ public class BeerOrderManagerServiceImpl implements BeerOrderManager {
         StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> sm = build(beerOrder);
         Message msg = MessageBuilder
                 .withPayload(beerOrderEventEnum)
+                .setHeader(ORDER_ID_HEADER, beerOrder.getId())
                 .build();
         sm.sendEvent(msg);
     }
